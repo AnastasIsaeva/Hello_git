@@ -11,6 +11,7 @@ library(dplyr)
 library(tidyr)
 library(lubridate)
 library (vegan)
+library (ggplot2)
 source("data.R")
 
 knitr::opts_chunk$set(echo = TRUE)
@@ -77,5 +78,21 @@ frequency_matrix <- top10diversity %>%
 frequency_matrix <- as.data.frame(frequency_matrix)
 rownames(frequency_matrix) <- frequency_matrix$date
 frequency_matrix <- frequency_matrix[, -1]
+```
+
+```{r}
+shannon_index <- diversity(frequency_matrix, index = "shannon")
+
+shannon_df <- data.frame(
+  Year = as.numeric(rownames(frequency_matrix)),
+  Shannon = shannon_index
+)
+
+ggplot(shannon_df, aes(x = Year, y = Shannon)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Индекс Шеннона по количеству встречаемости артистов",
+       x = "Год", y = "Индекс Шеннона") +
+  theme_minimal()
 ```
 
