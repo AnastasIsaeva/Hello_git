@@ -841,6 +841,19 @@ height: 0px !important;
   
 </table>
 </div>
+<pre class="r"><code>top10diversity &lt;- top10 %&gt;%
+  mutate (date = as.Date(date)) %&gt;% 
+  mutate(date = year(as.Date(date))) </code></pre>
+<pre class="r"><code>frequency_matrix &lt;- top10diversity %&gt;%
+  group_by(date, artist) %&gt;%
+  summarise(Count = n(), .groups = &quot;drop&quot;) %&gt;%
+  pivot_wider(names_from = artist, values_from = Count, values_fill = 0)</code></pre>
+<pre class="r"><code>frequency_matrix &lt;- as.data.frame(frequency_matrix)
+rownames(frequency_matrix) &lt;- frequency_matrix$date
+frequency_matrix &lt;- frequency_matrix[, -1]</code></pre>
+<pre class="r"><code>sh&lt;-diversity(frequency_matrix, index=&quot;shannon&quot;)</code></pre>
+<pre class="r"><code>frequency_matrix&lt;-as.data.frame(frequency_matrix)|&gt;
+  mutate(shannon=sh)</code></pre>
 
 
 
