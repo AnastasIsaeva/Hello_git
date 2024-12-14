@@ -8,7 +8,9 @@ output: html_document
 
 library(readr)
 library(dplyr)
-
+library(tidyr)
+library(lubridate)
+library (vegan)
 source("data.R")
 
 knitr::opts_chunk$set(echo = TRUE)
@@ -55,5 +57,25 @@ Median is `r me`
 artists[xs,] |>
   arrange(-n) |>
   gt::gt()
+```
+
+
+```{r}
+top10diversity <- top10 %>%
+  mutate (date = as.Date(date)) %>% 
+  mutate(date = year(as.Date(date))) 
+```
+
+```{r}
+frequency_matrix <- top10diversity %>%
+  group_by(date, artist) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  pivot_wider(names_from = artist, values_from = Count, values_fill = 0)
+```
+
+```{r}
+frequency_matrix <- as.data.frame(frequency_matrix)
+rownames(frequency_matrix) <- frequency_matrix$date
+frequency_matrix <- frequency_matrix[, -1]
 ```
 
